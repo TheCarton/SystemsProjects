@@ -1,0 +1,19 @@
+Name: Luke Van Der Male
+NUID: 002122275
+slack hours used: 0
+remaining slack hours: 0
+Taking the challenge I (optional): NO
+Taking the challenge II (optional): NO
+
+
+---
+
+Collaborators (who you talked to about the lab, what you talked about):
+
+
+Source material that you consulted:
+Stack Overflow on checking bits
+Geeks For Geeks
+Linux man pages
+
+Other acknowledgments:

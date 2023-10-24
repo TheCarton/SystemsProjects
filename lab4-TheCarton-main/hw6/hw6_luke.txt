@@ -1,0 +1,135 @@
+Luke Van Der Male
+
+released: 03/16, 8:00
+due: 03/22, 23:59
+
+Answer the following questions.
+Submit your answers to Canvas assignments.
+There is an entry for this homework.
+
+1. Byte-addressable vs. Bit-addressable memory
+
+Imagine we have a CS5600-VMem machine whose virtual address is 32bits
+and it uses 8kB pages.
+
+1.a. Assume CS5600-VMem is byte-addressable like x86, meaning the machine can
+address individual bytes (i.e., two addresses 0x1 and 0x2 point to **adjacent**
+two bytes). Then, how many bits will the offset (in VA and PA) need to access all
+bytes in a 8KB page? (1 point)
+
+13 bits.
+
+8 KB page = 8000 bytes
+2 ** 13 = 8192
+
+
+1.b. Now, assume CS5600-VMem is **bit-addressable**: it can access every **bit** in
+memory, meaning two addresses 0x1 and 0x2 point to adjacent two bits. Then, how
+many bits will the offset (in VA and PA) need to access all bits in a 8KB page? (1 point)
+
+16 bits.
+
+8 KB page = 64000 bits
+2 ** 16 = 65536
+
+
+1.c. Again, the machine is bit-addressable. If the physical address
+is of 28 bits (the VA has 32bits), how many bits does the PPN
+(physical page number) have? (1 point)
+
+5 bits.
+2 ** 5 = 32
+
+2. Simulate CPU and walk page tables
+
+   -- This is the standard x86 32-bit two-level page table structure
+       (not x86-64; 32-bit is simpler with 2-level page table).
+   -- The permission bits of page directory entries and page table entries are set to 0x7.
+      (what does 0x7 mean?
+       answer: page present, read-write, and user-mode; see our handout week10.a.
+       This means that the virtual addresses are valid, and that user programs
+       can read (load) from and write (store) to the virtual address.)
+
+   -- The memory pages are listed below.
+      On the left side of the pages are their addresses.
+      (For example, the address of the "top-left" memory block (4 bytes) is
+      0xf0f02ffc, and its content is 0xdeadbeef.)
+                    [update 03/16: the "0xdeadbeef" place was "0xf0f03007", which is a typo]
+
+
+  %cr3:  0xffff1000
+
+              +------------+            +------------+            +------------+            +------------+
+  0xf0f02ffc  | 0xdeadbeef | 0xff005ffc | 0xbeebebee | 0xffff1ffc | 0xd5202007 | 0xffff5ffc | 0xdeadbeef |
+              +------------+            +------------+            +------------+            +------------+
+              | ...        |            | ...        |            | ...        |            | ...        |
+              +------------+            +------------+            +------------+            +------------+
+  0xf0f02800  | 0xff005007 | 0xff005800 | 0xf0f02007 | 0xffff1800 | 0xef002007 | 0xffff5800 | 0xff005000 |
+              +------------+            +------------+            +------------+            +------------+
+              | ...        |            | ...        |            | ...        |            | ...        |
+              +------------+            +------------+            +------------+            +------------+
+  0xf0f02000  | 0xffff5007 | 0xff005000 | 0xc5201000 | 0xffff1000 | 0xff005007 | 0xffff5000 | 0xc5202000 |
+              +------------+            +------------+            +------------+            +------------+
+
+Question:
+
+[update 03/18: "3.a/b/c/d" => "2.a/b/c/d"]
+
+2.a. Split the 32bit virtual address "0x00200ffc" into L1 index (10bit), L2 index
+     (10bit), and offset (12bit).
+     Write them down in **decimal** numbers: (1 point)
+
+
+
+     - L1 index: 0
+     - L2 index: 512
+     - offset: 4092
+
+          0x00200ffc in 32 bit binary:
+          00000000001000000000111111111100
+
+          first ten: 0000000000
+          decimal: 0
+
+          second ten: 1000000000
+          decimal: 512
+
+          last twelve: 111111111100
+          decimal: 4092
+
+
+
+2.b. When accessing virtual address "0x00200ffc" using the above %cr3,
+     what are the addresses of the L1/L2 page table pages and the data page?
+     Write these pages' addresses (namely, the physical address of the first
+     byte on these pages).  (2 point)
+
+     - L1 PT page addr: 0xffff1000
+     - L2 PT page addr: 0xff005800
+     - data page addr: 0xf0f02ffc
+
+          - L1 index: 0
+          - L2 index: 512
+          - offset: 4092
+
+
+
+2.c. According to the above pages table setup,
+     what's the output of the following code?  (2 point)
+
+      #include "stdio.h"
+      int main() {
+         int *ptr2 = (int *) 0x00200ffc;
+         printf("0x%x\n", *ptr2); // printing as hex numbers
+      }
+
+      0xdeadbeef
+
+
+2.d. Copy the above code to a ".c" file, compile, and run.
+     What do you see? and why? (explain in 1 sentence)  (2 points)
+
+     Segmentation fault (core dumped)
+
+     The OS isn't going to let us get values from addresses we don't have permissions for.
+

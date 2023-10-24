@@ -1,0 +1,26 @@
+program allocator4: entry point 0x1c0000
+  seg[0]: addr 0x1c0000, size 0x1383, data_size 0x1383, read-only? (True)
+  seg[1]: addr 0x1c2000, size 0x1c, data_size 0x0, read-only? (False)
+k-hardware.cc:303: kernel assertion 'vmiter(pagetable, (uintptr_t) exception_entry).pa() == kptr2pa(exception_entry)' failed
+  #1  0x42d8b  <_Z15check_pagetableP16x86_64_pagetable>
+  #2  0x41199  <_Z3runP4proc>
+  #3  0x4138d  <_Z12kernel_startPKc>
+
+
+i want to copy over the exception_entry pa to the process
+
+but instead we have
+(uintptr_t) exception_entry).pa() != kptr2pa(exception_entry)
+
+why?
+
+maybe the exception entry pa isn't in the address range covered by my loop?
+
+test
+print exception entry pa
+
+.....
+Note that each process page table must contain kernel mappings (addresses before PROC_START_ADDR).
+Why? Because WeensyOS’s syscalls need the kernel stack for the exception_entry and syscall_entry code paths.
+(The exception_entry and syscall_entry assembly codes explicitly install kernel_pagetable when they begin,
+and exception_return and the syscall return path install the process’s page table as they exit.)

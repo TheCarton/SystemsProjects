@@ -1,0 +1,21 @@
+Name: Luke Van Der Male
+NUID: 002122275
+slack hours used: 46
+remaining slack hours: 57
+Taking the challenge (optional): NO
+
+
+---
+
+Collaborators (who you talked to about the lab, what you talked about):
+
+
+Source material that you consulted:
+Stack Overflow
+Geeks For Geeks
+Linux man page
+Medium.com
+Programiz.com
+www.tutorialspoint.com
+
+Other acknowledgments:

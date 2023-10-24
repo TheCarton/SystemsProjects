@@ -1,0 +1,5 @@
+    for (uintptr_t i = PROC_START_ADDR; i < PROC_START_ADDR + PROC_SIZE; i += PAGESIZE, p_vmiter += PAGESIZE) {
+        log_printf("i = [%p]\n", i);
+        p_vmiter.try_map(i, PTE_PWU);
+        log_printf("p_vmiter.va() = [%p]\n", p_vmiter.va());
+    }
