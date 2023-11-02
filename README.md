@@ -1,5 +1,5 @@
 # SystemsCS5600
-This is my repository for my systems CS5600 class. It is private only for reasons of academic integrity.
+This is my repository for my systems class.
 
 Lab 1 is an ‘encrypted’ queue.
 
